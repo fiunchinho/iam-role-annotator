@@ -2,13 +2,10 @@
 
 set -e
 
-# Get packages list except vendor directory
-packages="github.com/fiunchinho/iam-role-annotator/cmd github.com/fiunchinho/iam-role-annotator/controller github.com/fiunchinho/iam-role-annotator/service"
-
 # Create cover profile
 COVER_MODE="count"
 echo "mode: $COVER_MODE" > profile.cov
-for package in ${packages}; do
+for package in $(go list ./... | grep -v vendor); do
    go test -v -cover -covermode=${COVER_MODE} -coverprofile=profile.cov.tmp ${package}
    [[ -f "profile.cov.tmp" ]] && (cat profile.cov.tmp | tail -n +2 >> profile.cov)
    rm -f profile.cov.tmp

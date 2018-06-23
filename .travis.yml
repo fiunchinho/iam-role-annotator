@@ -7,8 +7,14 @@ branches:
 sudo: required
 services:
 - docker
+before_script:
+- curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+- chmod +x ./cc-test-reporter
+- ./cc-test-reporter before-build
 script:
 - make release test coverage
+after_script:
+- ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 env:
@@ -17,3 +23,4 @@ env:
   - secure: "u665Lsn34NU4Rz8GxImky5TUnmF4LAwA0+KeXVRv09m1ftMeARC7U6b4bbdmCADbgKnHMSw5ABcw9t5Oai8QijwHeVpF3ez2IgOCUpHd0Q50fNToi396AVzcnTZsdB6kvPxut/iK7i6a8+25/6KizHrs4g4GM4kxZ1zpQdJZ3f482TetiL239ZobSF8NImGWK6EB1YqoOveV8jLnsYO3HOQAC98d5zIBkk+t7t2m/jgQr1qhCv/bRIERQ5xrF//9xVNGoHgaAz72nBP+3fil/+5hkyRNoWP2qTwNySo4YGLB+T/bxUEzGj4i/7OFF+pTeLVp5b3EwPSVOPNQjfHON/chHu+zdnemzswtZBqwgn38fbR4zm7vWbuGdMwFj9f+EarDVhAiE85G1qo5y7A4nHmXHvKQkV4eomPCFGtfHAEyjkbu9jfdpcE8v2BILEh3RnIlTmPF256stqlHCu3HjvBr17/YOFJctjU17NTRFn1VbpKFgQ0Z4ZT3wZOEEGByrqNuuXRQjqx+17Xtz2YXVPcsmpxKgMb7hrPkFqXs+J6e2bfKtmaU4nNML8GZ5HiSqjDEbWtzguZsD5FpEI4v365qozkVdG/iLnh93t4+PFL6ooNE9dBU5oZbLh6/4Jtc1Xj8QVvU/cttQmU3YslJaW0mUCqSAr+RxKTcfhIKEkw="
   # DOCKER_PASS
   - secure: "MtgwQZ1JVYuZp+8v1lBXP6dAkVAslgzvAmEfOwcwEcccjaKrbFT/3apT4CE+FvagwzZOw0OdevxRWa/XHk7hSLjteAUjsbRxiJZIJ+oIiR7cAZiMcUrPuorYBH/umyV5JzEv6owWtQWyIv4lDJ7NpOSJ/YRgbdup38laGHQbIWczNPgIideJiRr7T2udtwFPF1j0Go0xL9ypsTSyOf6yqtjli6IJJwbLeV1hGIrJi9MTYqGzsgqyTaESxU1Wz2KC9vRM3SYcVevvkZH+R9epq0uuytdH6JpJ8dwDVyQAhHTG8gEQwK6bkuSzgpVWhaaMIW5sWsbNZal6KdfqRJ6cDG2cB2ha8t4+iIly/Yxaet0DWqBpLI1KKd2dI2wfo673ud9CJx4CjDu5yt7TF+kxhxd0+NTno+FCKxeBsVPX9qHALaXn0ITbB+czj5/dXChKRAnct0nW4uNQg9fgCGamRiYM99kmglDX04TpZL5P1RexLmYUol0oRwXysDjXJWbFHDIR7WHR8pGSFr8wFE3RA3zwYrlKPXfkcLmNOZw5e51d+Tmjp4vUyEIydFpfDK/k2nnlXzUrgEgFpsXNnrsjUubRHAnfJs2Rp9ZfobMTjmd1aeI0N0E90LcUlhyJt2SCoxT9MDR0G0bHFM73FiI3OKiUPu1tSAj6shLqHi867Fo="
+  - CC_TEST_REPORTER_ID=e3b52b7a82834f79e2ff72e3ed3476bb975c416e12d9f3c30bd3cfabac82a22a
