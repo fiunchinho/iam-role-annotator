@@ -1,0 +1,14 @@
+replicaCount: 1
+
+image:
+  repository: fiunchinho/iam-role-annotator
+  tag: latest
+  pullPolicy: IfNotPresent
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 500m
+    memory: 256Mi

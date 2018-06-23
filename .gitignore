@@ -1,0 +1,7 @@
+vendor
+coverage.*
+profile.cov*
+junit-report.xml
+checkstyle-report.xml
+build
+main

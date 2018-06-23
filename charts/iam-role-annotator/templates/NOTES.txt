@@ -1,0 +1,1 @@
+Annotate your Deployment objects with `armesto.net/iam-role-annotator: "true"`
