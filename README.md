@@ -2,6 +2,8 @@
 This Kubernetes controller is watching Deployment objects using the Kubernetes API. Whenever a Deployment is created or updated,
  the controller will check if the Deployment contains the `armesto.net/iam-role-annotator` annotation, and, in that case, add the `iam.amazonaws.com/role` annotation containing the appropiate IAM Role.
 
+[![Build Status](https://travis-ci.org/fiunchinho/iam-role-annotator.svg?branch=master)](https://travis-ci.org/fiunchinho/iam-role-annotator)
+
 The IAM Role Annotator assumes that an IAM Role is already created for every application. The IAM Role ARN used in the annotation
  will be an ARN of the form `arn:aws:iam::<AWS_ACCOUNT_ID>:role/<APPLICATION_NAME>`, where the application name is the name of the `Deployment` object.
 
