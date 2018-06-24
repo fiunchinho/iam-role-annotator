@@ -30,12 +30,11 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command:
-          - "/sbin/tini"
-          - "--"
-          - "./app"
-          - "--namespace={{ .Release.Namespace }}"
-          - '--aws-account-id=value: {{required "Missing awsAccountId parameter" .Values.awsAccountId }}'
+          env:
+          - name: NAMESPACE
+            value: {{ .Release.Namespace }}
+          - name: AWS_ACCOUNT_ID
+            value: {{required "Missing awsAccountId parameter" .Values.awsAccountId }}
           livenessProbe:
             httpGet:
               path: "/healthz"

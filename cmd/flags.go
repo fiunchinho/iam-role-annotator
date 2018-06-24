@@ -1,11 +1,11 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
 
+	"github.com/namsral/flag"
 	"k8s.io/client-go/util/homedir"
 )
 

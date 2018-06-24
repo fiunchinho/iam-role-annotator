@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -28,7 +27,7 @@ func getKubernetesClient(kubeconfig string, logger pkg.Logger) (kubernetes.Inter
 		logger.Warningf("Falling back to using kubeconfig file: %s", err)
 		cfg, err = clientcmd.BuildConfigFromFlags("", kubeconfig)
 		if err != nil {
-			return nil, fmt.Errorf("could not load configuration: %s", err)
+			return nil, err
 		}
 	}
 
@@ -80,6 +79,6 @@ func main() {
 			os.Exit(1)
 		}
 	case <-signalC:
-		logger.Infof("Signal captured, exiting...")
+		logger.Info("Signal captured, exiting...")
 	}
 }
