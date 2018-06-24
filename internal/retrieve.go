@@ -1,4 +1,4 @@
-package controller
+package internal
 
 import (
 	appsv1beta1 "k8s.io/api/apps/v1beta1"

@@ -2,14 +2,22 @@
   name = "github.com/stretchr/testify"
   version = "1.2.0"
 
-[[constraint]]
+[[override]]
   name = "k8s.io/client-go"
   version = "kubernetes-1.10.0"
 
-[[constraint]]
+[[override]]
   name = "k8s.io/api"
   version = "kubernetes-1.10.0"
 
-[[constraint]]
+[[override]]
   name = "k8s.io/apimachinery"
   version = "kubernetes-1.10.0"
+
+[[constraint]]
+  name = "github.com/spotahome/kooper"
+  version = "0.2.0"
+
+[[constraint]]
+  name = "go.uber.org/zap"
+  version = "1.8.0"

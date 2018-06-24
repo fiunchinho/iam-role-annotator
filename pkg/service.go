@@ -1,7 +1,6 @@
-package service
+package pkg
 
 import (
-	"github.com/spotahome/kooper/log"
 	appsv1beta1 "k8s.io/api/apps/v1beta1"
 	"k8s.io/client-go/kubernetes"
 )
@@ -17,11 +16,11 @@ const (
 type IamRoleAnnotator struct {
 	client       kubernetes.Interface
 	awsAccountID string
-	logger       log.Logger
+	logger       Logger
 }
 
 // NewIamRoleAnnotator returns a new IamRoleAnnotator.
-func NewIamRoleAnnotator(k8sCli kubernetes.Interface, awsAccountID string, logger log.Logger) *IamRoleAnnotator {
+func NewIamRoleAnnotator(k8sCli kubernetes.Interface, awsAccountID string, logger Logger) *IamRoleAnnotator {
 	return &IamRoleAnnotator{
 		client:       k8sCli,
 		awsAccountID: awsAccountID,
@@ -34,7 +33,7 @@ func (s *IamRoleAnnotator) Annotate(deployment appsv1beta1.Deployment) (*appsv1b
 	newDeployment := deployment.DeepCopy()
 
 	_, deploymentExpectsToBeAnnotated := newDeployment.ObjectMeta.Annotations[AnnotationToWatch]
-	if ! deploymentExpectsToBeAnnotated {
+	if !deploymentExpectsToBeAnnotated {
 		return newDeployment, nil
 	}
 
@@ -52,7 +51,7 @@ func (s *IamRoleAnnotator) Annotate(deployment appsv1beta1.Deployment) (*appsv1b
 	return newDeployment, err
 }
 
-// getRoleArn returns the role arn to put in the Deployment annotation
+// getRoleArn returns the role arn to put in the Deployment annotation.
 func (s *IamRoleAnnotator) getRoleArn(deployment *appsv1beta1.Deployment) string {
 	return "arn:aws:iam::" + s.awsAccountID + ":role/" + deployment.ObjectMeta.Name
 }

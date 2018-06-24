@@ -6,24 +6,26 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/spotahome/kooper/log"
 	"k8s.io/client-go/kubernetes"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/oidc"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 
 	"time"
-	"github.com/fiunchinho/iam-role-annotator/service"
-	"github.com/fiunchinho/iam-role-annotator/controller"
+
+	"github.com/fiunchinho/iam-role-annotator/internal"
+	"github.com/fiunchinho/iam-role-annotator/pkg"
+	"github.com/spotahome/kooper/operator/controller"
+	"go.uber.org/zap"
 )
 
-func getKubernetesClient(kubeconfig string) (kubernetes.Interface, error) {
+func getKubernetesClient(kubeconfig string, logger pkg.Logger) (kubernetes.Interface, error) {
 	var err error
 	var cfg *rest.Config
 
 	cfg, err = rest.InClusterConfig()
 	if err != nil {
-		fmt.Printf("Falling back to using kubeconfig file: %s\n", err)
+		logger.Warningf("Falling back to using kubeconfig file: %s", err)
 		cfg, err = clientcmd.BuildConfigFromFlags("", kubeconfig)
 		if err != nil {
 			return nil, fmt.Errorf("could not load configuration: %s", err)
@@ -34,7 +36,9 @@ func getKubernetesClient(kubeconfig string) (kubernetes.Interface, error) {
 }
 
 func main() {
-	logger := &log.Std{}
+	zapLogger, _ := zap.NewProduction()
+	defer zapLogger.Sync()
+	logger := pkg.NewLogger(*zapLogger.Sugar())
 
 	stopC := make(chan struct{})
 	finishC := make(chan error)
@@ -44,28 +48,25 @@ func main() {
 	// Parse command line arguments.
 	flags, err := NewFlags()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Invalid configuration: %s", err)
+		logger.Errorf("Invalid configuration: %s", err)
 		os.Exit(1)
 	}
 
 	// Get kubernetes rest client.
-	k8sCli, err := getKubernetesClient(flags.KubeConfig)
+	k8sCli, err := getKubernetesClient(flags.KubeConfig, logger)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Can't create k8s client: %s", err)
+		logger.Errorf("Can't create k8s client: %s", err)
 		os.Exit(1)
 	}
 
 	// Create the controller and run.
-	ctrl, err := controller.New(
+	ctrl := controller.NewSequential(
 		time.Duration(flags.ResyncSec)*time.Second,
-		controller.NewHandler(*service.NewIamRoleAnnotator(k8sCli, flags.AWSAccountID, logger)),
-		controller.NewDeploymentRetrieve(flags.Namespace, k8sCli),
+		internal.NewHandler(*pkg.NewIamRoleAnnotator(k8sCli, flags.AWSAccountID, logger)),
+		internal.NewDeploymentRetrieve(flags.Namespace, k8sCli),
+		nil,
 		logger,
 	)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%s", err)
-		os.Exit(1)
-	}
 
 	// Run in background the controller.
 	go func() {
@@ -75,11 +76,10 @@ func main() {
 	select {
 	case err := <-finishC:
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "error running controller: %s", err)
+			logger.Errorf("error running controller: %s", err)
 			os.Exit(1)
 		}
 	case <-signalC:
 		logger.Infof("Signal captured, exiting...")
 	}
-
 }
