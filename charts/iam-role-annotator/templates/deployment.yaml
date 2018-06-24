@@ -32,9 +32,11 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
           - name: NAMESPACE
-            value: {{ .Release.Namespace }}
+            value: "{{ .Release.Namespace }}"
           - name: AWS_ACCOUNT_ID
-            value: {{required "Missing awsAccountId parameter" .Values.awsAccountId }}
+            value: '{{ required "Missing awsAccountId parameter" .Values.awsAccountId }}'
+          args:
+          - ""
           livenessProbe:
             httpGet:
               path: "/healthz"
