@@ -28,6 +28,11 @@ You can start the application with the following command
 $ go run ./cmd/* --namespace your-namespace --aws-account-id 12345
 ```
 
+Or using environment variables
+```bash
+$ NAMESPACE="your-namespace" AWS_ACCOUNT_ID="12345" go run ./cmd/*
+```
+
 ### Parameters
 These are the available parameters (all parameters can be also passed as environment variables)
 - **namespace**: Only Deployments in this namespace will be watched
