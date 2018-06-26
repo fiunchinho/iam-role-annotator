@@ -1,6 +1,6 @@
 vendor
 coverage.*
-profile.cov*
+c.out
 junit-report.xml
 checkstyle-report.xml
 build
