@@ -13,10 +13,7 @@ func TestDeploymentIsAnnotatedAndSaved(t *testing.T) {
 	applicationName := "app-name"
 	expectedAnnotationValue := "arn:aws:iam::" + awsAccountID + ":role/" + applicationName
 
-	deployment := appsv1beta1.Deployment{}
-	deployment.Name = applicationName
-	deployment.ObjectMeta.Annotations = make(map[string]string)
-	deployment.ObjectMeta.Annotations[AnnotationToWatch] = "true"
+	deployment := NewDeploymentBuilder().Named(applicationName).WithAnnotation(AnnotationToWatch, "true").Build()
 
 	srv := NewIamRoleAnnotator(fake.NewSimpleClientset(), awsAccountID, NewDummyLogger())
 	newDeployment, _ := srv.Annotate(deployment)
@@ -30,8 +27,7 @@ func TestDeploymentDoesntWantToBeAnnotatedThenNothingHappens(t *testing.T) {
 	awsAccountID := "12345"
 	applicationName := "app-name"
 
-	deployment := appsv1beta1.Deployment{}
-	deployment.Name = applicationName
+	deployment := NewDeploymentBuilder().Named(applicationName).Build()
 
 	srv := NewIamRoleAnnotator(fake.NewSimpleClientset(), awsAccountID, NewDummyLogger())
 	newDeployment, _ := srv.Annotate(deployment)
@@ -44,13 +40,40 @@ func TestDeploymentIsSkippedBecauseAlreadyHasKube2IAMAnnotation(t *testing.T) {
 	awsAccountID := "12345"
 	applicationName := "app-name"
 
-	deployment := appsv1beta1.Deployment{}
-	deployment.Name = applicationName
-	deployment.ObjectMeta.Annotations = make(map[string]string)
-	deployment.ObjectMeta.Annotations[AnnotationToWatch] = "true"
-	deployment.Spec.Template.ObjectMeta.Annotations = make(map[string]string)
-	deployment.Spec.Template.ObjectMeta.Annotations[Kube2IAMAnnotation] = "arn:aws:iam::" + awsAccountID + ":role/" + applicationName
+	roleArn := "arn:aws:iam::" + awsAccountID + ":role/" + applicationName
+	deployment := NewDeploymentBuilder().Named(applicationName).WithAnnotation(AnnotationToWatch, "true").WithAnnotation(Kube2IAMAnnotation, roleArn).Build()
 
 	srv := NewIamRoleAnnotator(fake.NewSimpleClientset(), awsAccountID, NewDummyLogger())
 	srv.Annotate(deployment)
+}
+
+func NewDeploymentBuilder() *DeploymentBuilder {
+	return &DeploymentBuilder{
+		annotations: make(map[string]string),
+	}
+}
+
+type DeploymentBuilder struct {
+	name        string
+	annotations map[string]string
+}
+
+func (builder *DeploymentBuilder) Named(name string) *DeploymentBuilder {
+	builder.name = name
+
+	return builder
+}
+
+func (builder *DeploymentBuilder) WithAnnotation(key string, value string) *DeploymentBuilder {
+	builder.annotations[key] = value
+
+	return builder
+}
+
+func (builder *DeploymentBuilder) Build() appsv1beta1.Deployment {
+	deployment := appsv1beta1.Deployment{}
+	deployment.Name = builder.name
+	deployment.ObjectMeta.Annotations = builder.annotations
+
+	return deployment
 }

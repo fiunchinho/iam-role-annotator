@@ -14,7 +14,7 @@ before_script:
 script:
 - make release test coverage
 after_script:
-- ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+- ./cc-test-reporter after-build --coverage-input-type gocov --exit-code $TRAVIS_TEST_RESULT
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 env:

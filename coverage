@@ -3,16 +3,16 @@
 set -e
 
 # Create cover profile
-COVER_MODE="count"
-echo "mode: $COVER_MODE" > profile.cov
-for package in $(go list ./... | grep -v vendor); do
-   go test -v -cover -covermode=${COVER_MODE} -coverprofile=profile.cov.tmp ${package}
-   [[ -f "profile.cov.tmp" ]] && (cat profile.cov.tmp | tail -n +2 >> profile.cov)
-   rm -f profile.cov.tmp
+for pkg in $(go list ./... | grep -v vendor); do
+   go test -v -cover -coverprofile=$(echo $pkg | tr / -).cover $pkg
 done
 
+echo "mode: set" > c.out
+grep -h -v "^mode:" ./*.cover >> c.out
+rm -f *.cover
+
 # Print code coverage details
-go tool cover -func profile.cov
+go tool cover -func c.out
 
 # Generate coverage report
-gocov convert profile.cov | gocov-xml > coverage.xml
+gocov convert c.out | gocov-xml > coverage.xml
