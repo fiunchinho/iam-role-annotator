@@ -56,4 +56,4 @@ release: $(LINUX)
 	docker build -t "${DOCKER_IMAGE}" "."
 	docker tag "${DOCKER_IMAGE}" "${DOCKER_IMAGE}:${TRAVIS_COMMIT}"
 	docker push "${DOCKER_IMAGE}"
-	echo "Pushed image ${DOCKER_IMAGE}"
+	echo "Pushed image ${DOCKER_IMAGE}:${TRAVIS_COMMIT}"
