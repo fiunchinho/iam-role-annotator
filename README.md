@@ -25,12 +25,12 @@ $ make test
 ## Usage
 You can start the application with the following command
 ```bash
-$ go run ./cmd/* --namespace your-namespace --aws-account-id 12345
+$ go run *.go --namespace your-namespace --aws-account-id 12345
 ```
 
 Or using environment variables
 ```bash
-$ NAMESPACE="your-namespace" AWS_ACCOUNT_ID="12345" go run ./cmd/*
+$ NAMESPACE="your-namespace" AWS_ACCOUNT_ID="12345" go run *.go
 ```
 
 ### Parameters
