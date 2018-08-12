@@ -1,14 +1,13 @@
-package internal
+package pkg
 
 import (
-	"github.com/fiunchinho/iam-role-annotator/pkg"
 	appsv1beta1 "k8s.io/api/apps/v1beta1"
 	"k8s.io/apimachinery/pkg/runtime"
 )
 
 // Handler will receive objects whenever they get added or deleted from the k8s API.
 type Handler struct {
-	iamRoleAnnotator pkg.IamRoleAnnotator
+	iamRoleAnnotator IamRoleAnnotatorInterface
 }
 
 // Add is called when a k8s object is created.
@@ -23,7 +22,7 @@ func (h *Handler) Delete(s string) error {
 }
 
 // NewHandler returns a new Handler to handle Deployments created/updated/deleted.
-func NewHandler(iamRoleAnnotator pkg.IamRoleAnnotator) *Handler {
+func NewHandler(iamRoleAnnotator IamRoleAnnotatorInterface) *Handler {
 	return &Handler{
 		iamRoleAnnotator: iamRoleAnnotator,
 	}
