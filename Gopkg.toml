@@ -23,5 +23,5 @@
   version = "1.8.0"
 
 [[constraint]]
-  name = "github.com/namsral/flag"
-  branch = "master"
+  name = "github.com/spf13/cobra"
+  version = "0.0.3"

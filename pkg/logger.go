@@ -41,22 +41,22 @@ func (l *ZapLogger) Error(format string) {
 
 // Infof logging with INFO level.
 func (l *ZapLogger) Infof(format string, args ...interface{}) {
-	l.logger.Infof(format, args)
+	l.logger.Infof(format, args...)
 }
 
 // Debugf logging with DEBUG level.
 func (l *ZapLogger) Debugf(format string, args ...interface{}) {
-	l.logger.Debugf(format, args)
+	l.logger.Debugf(format, args...)
 }
 
 // Warningf logging with WARNING level.
 func (l *ZapLogger) Warningf(format string, args ...interface{}) {
-	l.logger.Warnf(format, args)
+	l.logger.Warnf(format, args...)
 }
 
 // Errorf logging with ERROR level.
 func (l *ZapLogger) Errorf(format string, args ...interface{}) {
-	l.logger.Errorf(format, args)
+	l.logger.Errorf(format, args...)
 }
 
 // NewLogger returns a new Logger using the zap logger underneath

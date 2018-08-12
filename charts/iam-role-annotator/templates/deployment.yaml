@@ -24,6 +24,7 @@ spec:
           image: k8s.gcr.io/exechealthz-amd64:1.2
           args:
           - "-cmd=nslookup localhost"
+          - "--quiet"
           ports:
           - containerPort: 8080
             protocol: TCP
@@ -35,8 +36,6 @@ spec:
             value: "{{ .Release.Namespace }}"
           - name: AWS_ACCOUNT_ID
             value: '{{ required "Missing awsAccountId parameter" .Values.awsAccountId }}'
-          args:
-          - ""
           livenessProbe:
             httpGet:
               path: "/healthz"

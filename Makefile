@@ -13,11 +13,11 @@ TRAVIS_COMMIT    ?= latest
 
 .PHONY: $(DARWIN)
 $(DARWIN): dep
-	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -a -installsuffix cgo -o ${DARWIN} ./cmd/...
+	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -a -installsuffix cgo -o ${DARWIN} *.go
 
 .PHONY: $(LINUX)
 $(LINUX): dep
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o ${LINUX} ./cmd/...
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o ${LINUX} *.go
 
 .PHONY: dep
 dep: $(DEP)
