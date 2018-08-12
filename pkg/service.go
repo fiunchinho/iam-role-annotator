@@ -12,6 +12,11 @@ const (
 	Kube2IAMAnnotation = "iam.amazonaws.com/role"
 )
 
+// IamRoleAnnotatorInterface for the IamRoleAnnotator
+type IamRoleAnnotatorInterface interface {
+	Annotate(deployment appsv1beta1.Deployment) (*appsv1beta1.Deployment, error)
+}
+
 // IamRoleAnnotator is simple annotator service.
 type IamRoleAnnotator struct {
 	client       kubernetes.Interface

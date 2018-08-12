@@ -13,7 +13,6 @@ import (
 
 	"k8s.io/client-go/util/homedir"
 
-	"github.com/fiunchinho/iam-role-annotator/internal"
 	"github.com/fiunchinho/iam-role-annotator/pkg"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -122,8 +121,8 @@ func getKubernetesClient(kubeconfig string, logger pkg.Logger) (kubernetes.Inter
 func getController(k8sCli kubernetes.Interface, logger pkg.Logger) controller.Controller {
 	return controller.NewSequential(
 		time.Duration(viper.GetInt("resync-seconds"))*time.Second,
-		internal.NewHandler(*pkg.NewIamRoleAnnotator(k8sCli, viper.GetString("aws-account-id"), logger)),
-		internal.NewDeploymentRetrieve(viper.GetString("namespace"), k8sCli),
+		pkg.NewHandler(pkg.NewIamRoleAnnotator(k8sCli, viper.GetString("aws-account-id"), logger)),
+		pkg.NewDeploymentRetrieve(viper.GetString("namespace"), k8sCli),
 		nil,
 		logger,
 	)
