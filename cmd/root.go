@@ -99,6 +99,9 @@ func init() {
 	rootCmd.Flags().Int("resync-seconds", 30, "The number of seconds the controller will resync the resources")
 	viper.BindPFlag("resync-seconds", rootCmd.Flags().Lookup("resync-seconds"))
 
+	rootCmd.Flags().Bool("enable-opt-out-mode", false, "Enable the opt-out mode, where all Deployments will get the IAM annotation unless they explicitly opt out of it")
+	viper.BindPFlag("enable-opt-out-mode", rootCmd.Flags().Lookup("enable-opt-out-mode"))
+
 	viper.AutomaticEnv()
 }
 
@@ -119,9 +122,14 @@ func getKubernetesClient(kubeconfig string, logger pkg.Logger) (kubernetes.Inter
 }
 
 func getController(k8sCli kubernetes.Interface, logger pkg.Logger) controller.Controller {
+	annotator := pkg.NewOptinIamRoleAnnotator(k8sCli, viper.GetString("aws-account-id"), logger)
+	if viper.GetBool("enable-opt-out-mode") {
+		annotator = pkg.NewOptoutIamRoleAnnotator(k8sCli, viper.GetString("aws-account-id"), logger)
+	}
+
 	return controller.NewSequential(
 		time.Duration(viper.GetInt("resync-seconds"))*time.Second,
-		pkg.NewHandler(pkg.NewIamRoleAnnotator(k8sCli, viper.GetString("aws-account-id"), logger)),
+		pkg.NewHandler(annotator),
 		pkg.NewDeploymentRetrieve(viper.GetString("namespace"), k8sCli),
 		nil,
 		logger,

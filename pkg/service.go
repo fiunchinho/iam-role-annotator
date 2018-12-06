@@ -1,6 +1,8 @@
 package pkg
 
 import (
+	"strconv"
+
 	appsv1beta1 "k8s.io/api/apps/v1beta1"
 	"k8s.io/client-go/kubernetes"
 )
@@ -19,17 +21,29 @@ type IamRoleAnnotatorInterface interface {
 
 // IamRoleAnnotator is simple annotator service.
 type IamRoleAnnotator struct {
-	client       kubernetes.Interface
-	awsAccountID string
-	logger       Logger
+	client                          kubernetes.Interface
+	awsAccountID                    string
+	logger                          Logger
+	annotateWhenAnnotationIsMissing bool
 }
 
 // NewIamRoleAnnotator returns a new IamRoleAnnotator.
-func NewIamRoleAnnotator(k8sCli kubernetes.Interface, awsAccountID string, logger Logger) *IamRoleAnnotator {
+func NewOptinIamRoleAnnotator(k8sCli kubernetes.Interface, awsAccountID string, logger Logger) *IamRoleAnnotator {
 	return &IamRoleAnnotator{
 		client:       k8sCli,
 		awsAccountID: awsAccountID,
 		logger:       logger,
+		annotateWhenAnnotationIsMissing: false,
+	}
+}
+
+// NewOptoutIamRoleAnnotator returns a new IamRoleAnnotator.
+func NewOptoutIamRoleAnnotator(k8sCli kubernetes.Interface, awsAccountID string, logger Logger) *IamRoleAnnotator {
+	return &IamRoleAnnotator{
+		client:       k8sCli,
+		awsAccountID: awsAccountID,
+		logger:       logger,
+		annotateWhenAnnotationIsMissing: true,
 	}
 }
 
@@ -37,8 +51,13 @@ func NewIamRoleAnnotator(k8sCli kubernetes.Interface, awsAccountID string, logge
 func (s *IamRoleAnnotator) Annotate(deployment appsv1beta1.Deployment) (*appsv1beta1.Deployment, error) {
 	newDeployment := deployment.DeepCopy()
 
-	_, deploymentExpectsToBeAnnotated := newDeployment.ObjectMeta.Annotations[AnnotationToWatch]
-	if !deploymentExpectsToBeAnnotated {
+	shouldAnnotate := s.annotateWhenAnnotationIsMissing
+	annotationValue, annotationIsPresent := deployment.ObjectMeta.Annotations[AnnotationToWatch]
+	if annotationIsPresent {
+		shouldAnnotate, _ = strconv.ParseBool(annotationValue)
+	}
+
+	if !shouldAnnotate {
 		return newDeployment, nil
 	}
 
