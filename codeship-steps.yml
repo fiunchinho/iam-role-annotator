@@ -1,0 +1,9 @@
+- type: serial
+  steps:
+#    - service: app
+#      command: make build/iam-role-annotator-linux-amd64 test
+    - service: app
+      command: sh ./e2e_test.sh
+    - tag: master
+      service: app
+      command: echo "deploy"

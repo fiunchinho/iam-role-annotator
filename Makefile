@@ -46,7 +46,7 @@ test: $(JUNITREPORT)
 	go test -v -cover ./... | tee /dev/tty | go-junit-report > junit-report.xml
 
 .PHONY: coverage
-coverage: $(COVER) lint
+coverage: $(COVER)
 	./coverage
 
 .PHONY: release
@@ -55,3 +55,6 @@ release: $(LINUX)
 	docker build -t "${DOCKER_IMAGE}" "."
 	docker tag "${DOCKER_IMAGE}" "${DOCKER_IMAGE}:${TRAVIS_COMMIT}"
 	docker push "${DOCKER_IMAGE}"
+
+e2e:
+	./e2e_test.sh
