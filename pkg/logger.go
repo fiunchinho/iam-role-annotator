@@ -73,7 +73,6 @@ func NewDummyLogger() *DummyLogger {
 
 // DummyLogger is a logger that logs nothing
 type DummyLogger struct {
-	logger zap.SugaredLogger
 }
 
 // Info logging with INFO level.

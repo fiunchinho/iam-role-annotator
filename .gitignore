@@ -2,6 +2,5 @@ vendor
 coverage.*
 c.out
 junit-report.xml
-checkstyle-report.xml
 build
 main

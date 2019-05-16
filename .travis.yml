@@ -1,6 +1,6 @@
 language: go
 go:
-- 1.9.x
+- 1.12
 branches:
   only:
   - master
@@ -11,8 +11,18 @@ before_script:
 - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
 - chmod +x ./cc-test-reporter
 - ./cc-test-reporter before-build
+- curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/${KUBE_LATEST_VERSION}/bin/linux/amd64/kubectl
+- chmod +x kubectl
+- sudo mv kubectl /usr/local/bin/
+- curl -L https://kubernetes-helm.storage.googleapis.com/helm-${HELM_VERSION}-linux-amd64.tar.gz > ./helm.tar.gz
+- tar xzvf helm.tar.gz
+- chmod u+x linux-amd64/helm
+- sudo mv linux-amd64/helm /usr/local/bin/
+- go get sigs.k8s.io/kind
+- curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin v1.16.0
+
 script:
-- make release coverage
+- make release coverage e2e
 - echo "Pushed image ${DOCKER_IMAGE}:${TRAVIS_COMMIT}"
 after_script:
 - ./cc-test-reporter after-build --coverage-input-type gocov --exit-code $TRAVIS_TEST_RESULT
@@ -23,5 +33,8 @@ env:
   - DOCKER_IMAGE=fiunchinho/iam-role-annotator
   - DOCKER_USER=fiunchinho
   # DOCKER_PASS
-  - secure: "MtgwQZ1JVYuZp+8v1lBXP6dAkVAslgzvAmEfOwcwEcccjaKrbFT/3apT4CE+FvagwzZOw0OdevxRWa/XHk7hSLjteAUjsbRxiJZIJ+oIiR7cAZiMcUrPuorYBH/umyV5JzEv6owWtQWyIv4lDJ7NpOSJ/YRgbdup38laGHQbIWczNPgIideJiRr7T2udtwFPF1j0Go0xL9ypsTSyOf6yqtjli6IJJwbLeV1hGIrJi9MTYqGzsgqyTaESxU1Wz2KC9vRM3SYcVevvkZH+R9epq0uuytdH6JpJ8dwDVyQAhHTG8gEQwK6bkuSzgpVWhaaMIW5sWsbNZal6KdfqRJ6cDG2cB2ha8t4+iIly/Yxaet0DWqBpLI1KKd2dI2wfo673ud9CJx4CjDu5yt7TF+kxhxd0+NTno+FCKxeBsVPX9qHALaXn0ITbB+czj5/dXChKRAnct0nW4uNQg9fgCGamRiYM99kmglDX04TpZL5P1RexLmYUol0oRwXysDjXJWbFHDIR7WHR8pGSFr8wFE3RA3zwYrlKPXfkcLmNOZw5e51d+Tmjp4vUyEIydFpfDK/k2nnlXzUrgEgFpsXNnrsjUubRHAnfJs2Rp9ZfobMTjmd1aeI0N0E90LcUlhyJt2SCoxT9MDR0G0bHFM73FiI3OKiUPu1tSAj6shLqHi867Fo="
+  - secure: "sa+m8Gqqqp41sfv2Ph4FRaelVy/xqWG6gRv3HGePf3FkhUqtxRRU68Vd7y+5OzmhvceCmR1kEBTezn9ENqsnhi6y77bNCvhYKFJqMsLpfsTvKjLR6ggs9ZXqOvStdrS+A1C49e1EIFlIi5OFqNvJH6dVN0aCswkQGUs3CGOt/C232+MXDishNbYEwZWRcJY0oYU/w5XkAbKrr7lOlESBX80ldari2K+E+1p5FSD7XKAzMHR5nkuuQeYtcobONz1X/hAX3hW5Ypt7A66/SP81S9U8XukMsoQeZI8gUlHS0L2a4+atwN6MlJ6f7z1a4M0bd+8ZhsujLcwaLg3BdOiz8uHW5VQdSAm12yM6KJt+NLKAaDw0k0LaYvWNi2/EACKJ9Wv22G/WAv8osUF98U6vv5ySstiI/l3jaULvlJzO0cgcY1Juk57SlRuTyarS1I4CEvNfBScVwzl+/B0BppCK6QbkFyUr7V/P0FGlYw7Xvsa1SleTNZLLbYlMIrI3OrELjQL80yQsZE8NF+S9Pp2nXkK4STjxK64mAkCMzWQhDzNKorOH4nsQtpQVmIPxxQ9qj1ZXVFYmGP1quQum9BNwiu4D169kNH3W7YQeSMbNBtKeSWP2aMyRI9w+EQD/EbPeqr45Jwv9qTEbXV9dZ3i4iD2PFyBArCFRPz+nHcXaSg0="
   - CC_TEST_REPORTER_ID=e3b52b7a82834f79e2ff72e3ed3476bb975c416e12d9f3c30bd3cfabac82a22a
+  - KUBE_LATEST_VERSION="v1.13.4"
+  - HELM_VERSION="v2.13.1"
+  - GO111MODULE=on
