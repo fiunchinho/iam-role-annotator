@@ -3,9 +3,7 @@
 set -e
 
 function cleanup {
-    if [[ "${CREATE_CLUSTER}" = true ]]; then
-        kind delete cluster
-    else
+    if [[ "${CREATE_CLUSTER}" != true ]]; then
         kubectl delete namespace ${NAMESPACE}
     fi
 }
@@ -15,9 +13,11 @@ CREATE_CLUSTER=${CREATE_CLUSTER:-true}
 NAMESPACE=${NAMESPACE:-ns-1}
 DEPLOYMENT_NAME=${DEPLOYMENT_NAME:-nginx-deployment}
 AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID:-12345}
+K8S_VERSION=${K8S_VERSION:-v1.13.6}
 
-if [[ "${CREATE_CLUSTER}" = true ]]; then
-    kind create cluster --wait 60s
+if [[ "${CREATE_CLUSTER}" == true ]]; then
+    sed -i -E "s/(kubernetesVersion:\s*)(.+)/\1 ${K8S_VERSION}/" kind-config.yaml
+    kind create cluster --wait 60s --config kind-config.yaml
     export KUBECONFIG="$(kind get kubeconfig-path)"
 fi
 
