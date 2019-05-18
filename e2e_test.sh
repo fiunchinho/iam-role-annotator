@@ -65,7 +65,7 @@ sleep 20
 
 # Test if deployment has annotation
 kubectl get pods --namespace ${NAMESPACE}
-kubectl logs deploy/iam-role-annotator iam-role-annotator
+kubectl logs --namespace ${NAMESPACE} deploy/iam-role-annotator iam-role-annotator
 POD_NAME=$(kubectl get pods --namespace ${NAMESPACE} --field-selector=status.phase=Running -l "app=nginx" -o jsonpath="{.items[0].metadata.name}")
 
 if [[ $(kubectl get pod --namespace ${NAMESPACE} ${POD_NAME} -o json | jq '.metadata.annotations' | jq 'contains({"iam.amazonaws.com/role"})') == 'true' ]]; then
