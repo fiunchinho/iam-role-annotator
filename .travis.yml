@@ -11,7 +11,7 @@ before_script:
 - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
 - chmod +x ./cc-test-reporter
 - ./cc-test-reporter before-build
-- curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/${KUBE_LATEST_VERSION}/bin/linux/amd64/kubectl
+- curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/amd64/kubectl
 - chmod +x kubectl
 - sudo mv kubectl /usr/local/bin/
 - curl -L https://kubernetes-helm.storage.googleapis.com/helm-${HELM_VERSION}-linux-amd64.tar.gz > ./helm.tar.gz
@@ -35,6 +35,6 @@ env:
   # DOCKER_PASS
   - secure: "sa+m8Gqqqp41sfv2Ph4FRaelVy/xqWG6gRv3HGePf3FkhUqtxRRU68Vd7y+5OzmhvceCmR1kEBTezn9ENqsnhi6y77bNCvhYKFJqMsLpfsTvKjLR6ggs9ZXqOvStdrS+A1C49e1EIFlIi5OFqNvJH6dVN0aCswkQGUs3CGOt/C232+MXDishNbYEwZWRcJY0oYU/w5XkAbKrr7lOlESBX80ldari2K+E+1p5FSD7XKAzMHR5nkuuQeYtcobONz1X/hAX3hW5Ypt7A66/SP81S9U8XukMsoQeZI8gUlHS0L2a4+atwN6MlJ6f7z1a4M0bd+8ZhsujLcwaLg3BdOiz8uHW5VQdSAm12yM6KJt+NLKAaDw0k0LaYvWNi2/EACKJ9Wv22G/WAv8osUF98U6vv5ySstiI/l3jaULvlJzO0cgcY1Juk57SlRuTyarS1I4CEvNfBScVwzl+/B0BppCK6QbkFyUr7V/P0FGlYw7Xvsa1SleTNZLLbYlMIrI3OrELjQL80yQsZE8NF+S9Pp2nXkK4STjxK64mAkCMzWQhDzNKorOH4nsQtpQVmIPxxQ9qj1ZXVFYmGP1quQum9BNwiu4D169kNH3W7YQeSMbNBtKeSWP2aMyRI9w+EQD/EbPeqr45Jwv9qTEbXV9dZ3i4iD2PFyBArCFRPz+nHcXaSg0="
   - CC_TEST_REPORTER_ID=e3b52b7a82834f79e2ff72e3ed3476bb975c416e12d9f3c30bd3cfabac82a22a
-  - KUBE_LATEST_VERSION="v1.13.4"
+  - K8S_VERSION="v1.13.6"
   - HELM_VERSION="v2.13.1"
   - GO111MODULE=on
