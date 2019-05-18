@@ -3,16 +3,23 @@
 set -e
 
 function cleanup {
-  kubectl delete namespace ${NAMESPACE}
+    if [[ "${CREATE_CLUSTER}" = true ]]; then
+        kind delete cluster
+    else
+        kubectl delete namespace ${NAMESPACE}
+    fi
 }
 trap cleanup EXIT
 
+CREATE_CLUSTER=${CREATE_CLUSTER:-true}
 NAMESPACE=${NAMESPACE:-ns-1}
 DEPLOYMENT_NAME=${DEPLOYMENT_NAME:-nginx-deployment}
 AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID:-12345}
 
-kind create cluster --wait 60s
-export KUBECONFIG="$(kind get kubeconfig-path)"
+if [[ "${CREATE_CLUSTER}" = true ]]; then
+    kind create cluster --wait 60s
+    export KUBECONFIG="$(kind get kubeconfig-path)"
+fi
 
 # Create namespace for test
 kubectl create namespace ${NAMESPACE}
